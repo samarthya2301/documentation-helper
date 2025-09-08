@@ -10,6 +10,8 @@ langchain-community = "*"
 langchain-openai = "*"
 langchain-pinecone = "*"
 dotenv = "*"
+unstructured = "*"
+markdown = "*"
 
 [dev-packages]
 
