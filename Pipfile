@@ -8,10 +8,10 @@ langchain = "*"
 langchain-core = "*"
 langchain-community = "*"
 langchain-openai = "*"
-langchain-pinecone = "*"
 dotenv = "*"
 unstructured = "*"
 markdown = "*"
+langchain-pinecone = "==0.2.11"
 
 [dev-packages]
 
