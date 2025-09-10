@@ -14,10 +14,10 @@ def get_prompt_template() -> PromptTemplate:
 
 	If you don't know the answer, just say you don't know. \
 	Don't try to make up an answer. \
-	Use maximum 3 sentences and keep the answer as concise as possible. \
+	Use 10 sentences maximum. Keep the answer as concise as possible. \
+	Try to answer with bulleted or numbered lists. \
 	If asked to generate a code snippet, generate within the <code></code> tags. \
-	
-	Below is the user question:
+	At the end of your answer, put 'x-x-x-x-x' new line. \
 
 	<question>
 	{question}
