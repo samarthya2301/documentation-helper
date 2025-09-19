@@ -1,10 +1,10 @@
 from dotenv import load_dotenv
 from langchain_core.runnables import RunnablePassthrough, RunnableSerializable
 
-from embeddings import get_embeddings
-from llm import get_llm
-from prompt_template import get_prompt_template
-from vector_store import get_vector_store
+from embeddings.openai_embeddings import get_embeddings
+from llms.openai_llm import get_llm
+from prompts.prompt_template import get_prompt_template
+from stores.pinecone_vector_store import get_vector_store
 
 load_dotenv()
 
