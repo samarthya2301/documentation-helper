@@ -7,52 +7,46 @@ load_dotenv()
 def get_re_act_agent_prompt() -> PromptTemplate:
 	"""Retuns a Prompt Template to create a ReAct Agent."""
 
-	re_act_agent_template = """
-	Answer the following questions as best you can. You have access to the following tools:
+	re_act_agent_template ="""
+You are a helpful assistant.
 
-	<tools>
-	{tools}
-	</tools>
+Keep these points in mind:
+1. Answer the user's question based on the provided context.
+2. Context will be provided with the user question.
+3. Do not try to make up an answer.
+4. Use 4-8 sentences for an answer and keep it as concise as possible.
+5. Use numbered lists to answer the question.
 
-	Use the following format:
+You have access to the following tools:
+<tools>
+{tools}
+</tools>
 
+If you want to use a tool, output should comprise -
 	Question: the input question you must answer
-	Thought: you should always think about what to do
-	Action: the action to take, should be one of [{tool_names_as_string}]
+	Thought: reasoning about what to do
+	Action: the action to take, must be one of [{tool_names_as_string}]
 	Action Input: the input to the action
 	Observation: the result of the action
-	... (this Thought/Action/Action Input/Observation can repeat N times)
-	Thought: I now know the final answer
-	Final Answer: the final answer to the original input question
 
-	Begin!
+If the answer could not be found in the context, output should comprise -
+	Thought: I do not know the answer to this question.
+	Final Answer: I don't know!
 
-	<question>
-	{question}
-	</question>
+If you have the final answer, output should comprise -
+	Thought: I now know the final answer.
+	Final Answer: the final answer to the original question in 4-8 sentences as a numbered list.
 
-	<thought>
-	{thought}
-	</thought>
-	"""
+IMPORTANT: Once you have the Final Answer, you will not invoke any other tool.
 
-	# use this after the similar documents are fetched - context
-	prompt_template_str = """
-	Answer any user questions based solely on the context below: \
+Begin!
 
-	<context>
-	{context}
-	</context>
+<question>
+{question}
+</question>
 
-	If you don't know the answer, just say you don't know. \
-	Don't try to make up an answer. \
-	Use 10 sentences maximum. Keep the answer as concise as possible. \
-	Try to answer with bulleted or numbered lists. \
-	If asked to generate a code snippet, generate within the <code></code> tags. \
-	At the end of your answer, put 'x-x-x-x-x' new line. \
-
-	<question>
-	{question}
-	</question>
-	"""
+<thought>
+{thought}
+</thought>
+"""
 	return PromptTemplate.from_template(template=re_act_agent_template)

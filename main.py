@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
+from langchain.agents import AgentExecutor
+from langchain.agents.output_parsers import ReActSingleInputOutputParser
 from langchain.tools.render import render_text_description
-from langchain_core.output_parsers import StrOutputParser
 
 from embeddings.openai_embeddings import get_embeddings
 from llms.openai_llm import get_llm
@@ -8,7 +9,6 @@ from prompts.re_act_agent_prompt import get_re_act_agent_prompt
 from prompts.re_act_agent_questioning_prompt import \
     get_re_act_agent_questioning_prompt
 from stores.pinecone_vector_store import get_vector_store
-from tools.tool_validate_user_input import validate_user_input
 from util.util_format_log_to_str import format_log_to_str
 
 load_dotenv()
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 	# Prompt Template for Agent
 	app_agent_prompt_template = get_re_act_agent_prompt()
 	# Tools for Agent
-	app_agent_tools = [validate_user_input]
+	app_agent_tools = []
 	# Thought Pad for Agent
 	app_agent_thought = []
 	# Additional updates in Prompt Template for Agent
@@ -45,29 +45,30 @@ if __name__ == "__main__":
 		}
 		| app_agent_prompt
 		| app_llm
-		| StrOutputParser()
+		| ReActSingleInputOutputParser()
+		# | StrOutputParser()
 	)
 	print("\nReAct Agent Ready")
 
 	print("\nStarting Q/A Loop", "\n-----------------")
 
 
-	"""
-	Continue here, create agent loop for the below code.
-	agent_step is plain 'str'.
-	Maybe StrOutputParser is the reason.
-	Check why it is failing with ReActSingleInputOutputParser.
-	Create loop based on type of agent_step - AgentAction, AgentFinisha.
-	"""
 	
 	print("\nQuestion: ", end="")
 	user_question = input()
 	question_context = app_vector_store.as_retriever().invoke(input=user_question)
 	react_agent_question = get_re_act_agent_questioning_prompt().format(context=question_context, question=user_question)
-	agent_step = app_re_act_agent.invoke(
-		{
+	agent_executor = AgentExecutor(
+		agent=app_re_act_agent,
+		tools=app_agent_tools,
+		max_iterations=3,
+		verbose=True,
+		handle_parsing_errors=True,
+	)
+	result = agent_executor.invoke(
+		input={
 			"question": react_agent_question,
 			"thought": app_agent_thought
 		}
 	)
-	print(agent_step)
+	print(result)
